@@ -2,7 +2,7 @@
 
 from flask import (Flask, render_template, request, flash, session,
                    redirect)
-from model import connect_to_db, db
+from model import connect_to_db, db, User
 import crud
 
 from passlib.hash import pbkdf2_sha256
@@ -26,19 +26,36 @@ def register_user():
     """Create a new user."""
 
     email = request.form.get("email")
-    hashed_pass = pbkdf2_sha256.encrypt(request.form.get("password"), 
+    hashed_pass = pbkdf2_sha256.hash(request.form.get("password"), 
                                         rounds=200000, 
                                         salt_size=16)
     name = request.form.get("fname")
 
     user = crud.get_user_by_email(email)
     if user:
-        flash("Cannot create an account with that email. Try again.")
+        flash("Cannot create an account with that email. Try again.", "warning")
     else:
         user = crud.create_user(email, hashed_pass, name)
         db.session.add(user)
         db.session.commit()
-        flash("Account created! Please log in.")
+        flash("Account created! Please log in.", "success")
+
+    return redirect("/")
+
+@app.route("/login", methods=["POST"])
+def process_login():
+    """Process user login."""
+
+    email = request.form.get("email")
+    password = request.form.get("password")
+
+    user = crud.get_user_by_email(email)
+    if not user or not pbkdf2_sha256.verify(password, user.password):
+        flash("The email or password you entered was incorrect.", "danger")
+    else:
+        # Store the user's email in session
+        session["user_email"] = user.email
+        flash(f"Welcome back, {user.name}!", "success")
 
     return redirect("/")
 
