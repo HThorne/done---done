@@ -1,7 +1,7 @@
 """Script to seed database."""
 
 import os
-from passlib.hash import pbkdf2_sha256
+from passlib.hash import argon2
 
 import crud
 import model
@@ -15,7 +15,7 @@ model.db.create_all()
 
 for n in range(10):
     email = f'user{n}@test.com' 
-    password = pbkdf2_sha256.hash('Test')
+    password = argon2.hash('Test')
     name = 'Tester'
 
     # Create a test user here

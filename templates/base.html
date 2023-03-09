@@ -7,9 +7,9 @@
 
 
   <!-- Load React dependencies on all pages. -->
-  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.26.0/babel.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.26.0/babel.js"></script>
   <script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
-  <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script> -->
+  <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
 
   <!-- Page-specific JavaScript -->
   {% block js %}
@@ -28,7 +28,7 @@
   {% with messages=get_flashed_messages(with_categories=true) %}
     {% for category, message in messages %}
      <div class='alert alert-{{category}} alert-dismissible fade show' 
-     role='alert'>
+     role='alert' data-mdb-delay="3000">
         {{ message }}
         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
           <span aria-hidden="true">&times;</span>

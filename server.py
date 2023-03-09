@@ -2,10 +2,10 @@
 
 from flask import (Flask, render_template, request, flash, session,
                    redirect)
-from model import connect_to_db, db, User
+from model import connect_to_db, db
 import crud
 
-from passlib.hash import pbkdf2_sha256
+from passlib.hash import argon2
 
 from jinja2 import StrictUndefined
 
@@ -17,6 +17,8 @@ app.jinja_env.undefined = StrictUndefined
 @app.route('/')
 def homepage():
     """View homepage."""
+    if session.get("user_email"):
+        return redirect("/main-page")
 
     return render_template('homepage.html')
 
@@ -26,9 +28,7 @@ def register_user():
     """Create a new user."""
 
     email = request.form.get("email")
-    hashed_pass = pbkdf2_sha256.hash(request.form.get("password"), 
-                                        rounds=200000, 
-                                        salt_size=16)
+    hashed_pass = argon2.hash(request.form.get("password"))
     name = request.form.get("fname")
 
     user = crud.get_user_by_email(email)
@@ -47,18 +47,27 @@ def process_login():
     """Process user login."""
 
     email = request.form.get("email")
-    password = request.form.get("password")
+    attempt = request.form.get("password")
 
     user = crud.get_user_by_email(email)
-    if not user or not pbkdf2_sha256.verify(password, user.password):
+    if not user or not argon2.verify(attempt, user.password):
         flash("The email or password you entered was incorrect.", "danger")
+        return redirect("/")
     else:
         # Store the user's email in session
         session["user_email"] = user.email
         flash(f"Welcome back, {user.name}!", "success")
 
-    return redirect("/")
+    return redirect("/main-page")
 
+
+@app.route('/main-page')
+def main_page():
+    """View main page."""
+    if not session.get("user_email"):
+        return redirect("/")
+    
+    return render_template('main-page.html')
 
 
 
