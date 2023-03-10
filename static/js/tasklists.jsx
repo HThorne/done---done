@@ -22,6 +22,7 @@ function MainPage() {
           if (resp.error !== undefined) {
             throw (resp);
           }
+          document.getElementById('authorize_button').innerText = 'Connected. Refresh?';
           await fetchTaskLists();
           };
   
