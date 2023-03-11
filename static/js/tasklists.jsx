@@ -55,7 +55,7 @@ function TaskListView(props) {
   }
   
   return (
-    <div> { taskLists } </div>
+    <div className="accordion w-100" id="accordionAllLists"> { taskLists } </div>
   )
 }
 
@@ -87,14 +87,35 @@ function TasksView(props) {
 
     for (const task of tasks) {
         tasksElements.push(
-            <li key={task.id}>{ task.title }</li>
+            <tr key={task.id}>
+              <th scope="row"></th>
+              <td><input className="form-check-input" type="checkbox" id="checkboxNoLabel" 
+              value="" aria-label="..."></input></td>
+              <td>{ task.title }</td>
+            </tr>
         )
     }
 
     return (
         <React.Fragment>
-            <h2> {props.list.title} </h2>
-            <ul> { tasksElements } </ul>
+            <div className="accordion-item">
+                <h2 className="accordion-header" id={props.list.title}>
+                    <button className="accordion-button collapsed" type="button" 
+                    data-bs-toggle="collapse" data-bs-target={`#${props.list.id}`} aria-expanded="true" aria-controls={props.list.id}>
+                    {props.list.title}
+                    </button>
+                </h2>
+                <div id={props.list.id} className="accordion-collapse show" aria-labelledby={props.list.title}
+                  data-bs-parent="#accordionAllLists">
+                    <div className="accordion-body">
+                        <table className="table table-hover table-borderless align-middle"> 
+                            <tbody>
+                            { tasksElements } 
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </React.Fragment>
     )
 }
