@@ -102,6 +102,8 @@ function TasksView(props) {
     const [tasks, setTasks] = React.useState([]);
 
     const [taskInput, setTaskInput] = React.useState('');
+
+    const [taskEdit, setTaskEdit] = React.useState('');
   
     const handleInputText = (event) => {
       setTaskInput(event.target.value);
@@ -149,6 +151,25 @@ function TasksView(props) {
         fetchTasks()
     }
 
+    async function editTask(title, id) {
+        let response;
+        try {
+            response = await gapi.client.tasks.tasks.update({
+                'tasklist': props.list.id,
+                'task': `${ id }`,
+                'resource': {
+                    'id': `${ id }`,
+                    'title': `${ title }`
+                  }
+            });
+        } catch (err) {
+            document.getElementById('content').innerText = err.message;
+            return;
+        }
+        
+        fetchTasks()
+    }
+
     // const [taskInput, setTaskInput] = React.useState('');
   
     // const pickTask = (event) => {
@@ -174,27 +195,63 @@ function TasksView(props) {
             fetchTasks()
         }
 
-        // async function completeTask() {
-        //     let response;
-        //     try {
-        //         response = await gapi.client.tasks.tasks.update({
-        //             'tasklist': props.list.id,
-        //             'task': task.id,
-        //             'completed': "True"
-        //         });
-        //     } catch (err) {
-        //         document.getElementById('content').innerText = err.message;
-        //         return;
-        //     }
-        //     fetchTasks()
-        // }
+        const handleInputEdit = (event) => {
+            setTaskEdit(event.target.value);
+          };
+    
+        const handleEdit = (event) => {
+            if (event.key === 'Enter') {
+                  editTask(taskEdit)
+          }; }
+
+        async function editTask(title) {
+            let response;
+            try {
+                response = await gapi.client.tasks.tasks.update({
+                    'tasklist': props.list.id,
+                    'task': task.id,
+                    'resource': {
+                        'id': task.id,
+                        'title': `${ title }`
+                      }
+                });
+            } catch (err) {
+                document.getElementById('content').innerText = err.message;
+                return;
+            }
+            
+            fetchTasks()
+        }
+        
+
+        async function completeTask() {
+            let response;
+            try {
+                response = await gapi.client.tasks.tasks.update({
+                    'tasklist': props.list.id,
+                    'task': task.id,
+                    'resource': {
+                        'id': task.id,
+                        'status': 'completed'
+                    }
+                });
+            } catch (err) {
+                document.getElementById('content').innerText = err.message;
+                return;
+            }
+            fetchTasks()
+            deleteTask()
+        }
 
         tasksElements.push(
             <tr key={task.id} list={props.list.id}>
               <th scope="row"></th>
               <td><input className="form-check-input" type="checkbox"
-              value="" aria-label="Task complete checkbox" ></input></td>
-              <td>{ task.title , task.id }</td>
+              value="" aria-label="Task complete checkbox" onClick={completeTask}></input></td>
+              <td><div id={task.id} contentEditable="true" value={taskEdit} onChange={handleInputEdit} onKeyDown={handleEdit}>
+                    { task.title }
+                  </div>
+              </td>
                 <td>
                 <div className="btn-group">
                     <button type="button" className="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">

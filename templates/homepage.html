@@ -7,39 +7,41 @@
 
 {% block body %}
   <!-- Mount jsx on element with ids. -->
-  <h2>Create an Account</h2>
-  <form action="/new_user" method="POST">
+  <div class="container" id="create_login">
+    <h2>Create an Account</h2>
+        <form action="/new_user" method="POST">
     
-    <p>
-        First Name <input type="text" name="fname" aria-required>
-    </p>
-    
-    <p>
-      Email <input type="text" name="email" aria-required>
-    </p>
+        <p>
+            First Name <input type="text" name="fname" aria-required>
+        </p>
+        
+        <p>
+        Email <input type="text" name="email" aria-required>
+        </p>
 
-    <p>
-      Password <input type="password" name="password" aria-required>
-    </p>
-    
-    <p>
-      <input type="submit">
-    </p>
-  </form>
+        <p>
+        Password <input type="password" name="password" aria-required>
+        </p>
+        
+        <p>
+        <input type="submit">
+        </p>
+    </form>
 
-  <h2>Log In</h2>
-  <form action="/login" method="POST">
-    <p>
-      Email <input type="text" name="email">
-    </p>
+    <h2>Log In</h2>
+    <form action="/login" method="POST">
+        <p>
+        Email <input type="text" name="email">
+        </p>
 
-    <p>
-      Password <input type="password" name="password">
-    </p>
+        <p>
+        Password <input type="password" name="password">
+        </p>
 
-    <p>
-      <input type="submit">
-    </p>
-  </form>
+        <p>
+        <input type="submit">
+        </p>
+    </form>
+  </div>
 
 {% endblock %}
