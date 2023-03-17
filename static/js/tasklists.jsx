@@ -219,36 +219,48 @@ function TasksView(props) {
                 document.getElementById('content').innerText = err.message;
                 return;
             }
-            
             fetchTasks()
         }
         
 
-        async function completeTask() {
+        async function completeTask(event) {
             let response;
-            try {
+            try { 
+                let status = 'completed'
+                if (!event.target.checked) {
+                    status = 'needsAction';
+                }
+                
                 response = await gapi.client.tasks.tasks.update({
                     'tasklist': props.list.id,
                     'task': task.id,
                     'resource': {
                         'id': task.id,
-                        'status': 'completed'
+                        'status': status,
+                        'title': task.title
                     }
-                });
-            } catch (err) {
+                }); 
+            } 
+            catch (err) {
                 document.getElementById('content').innerText = err.message;
                 return;
             }
+
             fetchTasks()
-            deleteTask()
         }
 
+        const style = {}
+
+        if (task.status === 'completed'){
+            style["text-decoration"] = "line-through"  
+        }
+        
         tasksElements.push(
             <tr key={task.id} list={props.list.id}>
               <th scope="row"></th>
-              <td><input className="form-check-input" type="checkbox"
+              <td><input className="form-check-input" type="checkbox" checked={ task.status === 'completed' }
               value="" aria-label="Task complete checkbox" onClick={completeTask}></input></td>
-              <td><div id={task.id} contentEditable="true" value={taskEdit} onChange={handleInputEdit} onKeyDown={handleEdit}>
+              <td><div id={task.id} style = {style} contentEditable="true" value={taskEdit} onChange={handleInputEdit} onKeyDown={handleEdit}>
                     { task.title }
                   </div>
               </td>
@@ -304,3 +316,6 @@ function TasksView(props) {
 }
 
 ReactDOM.render(<MainPage />, document.querySelector('#all-lists'));
+
+// onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+//     // setName(event.target.value);}} id="outlined-controlled" value={task.title}
