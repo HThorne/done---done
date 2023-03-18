@@ -40,13 +40,14 @@ function MainPage() {
     return (
     <React.Fragment>
       <button type="button" className="btn btn-secondary" id="authorize_button" onClick={ handleAuthClick }>Authorize</button>
-      <TaskListView taskList={taskList}/>
+      <TaskListView taskList={taskList} fetchtasklists={ fetchTaskLists }/>
       {/* <button type="button" class="btn btn-secondary" id="signout_button" onClick={ handleSignoutClick }>Sign Out</button>  */}
     </React.Fragment>
     )
 }
 
 function TaskListView(props) {
+    const fetchTaskLists = props.fetchtasklists
     const [taskListInput, setTaskListInput] = React.useState('');
   
     const handleInputList = (event) => {
@@ -71,7 +72,7 @@ function TaskListView(props) {
             document.getElementById('content').innerText = err.message;
             return;
         }
-        props.fetchTaskLists
+        fetchTaskLists()
     }
 
     const taskLists = []
@@ -102,8 +103,6 @@ function TasksView(props) {
     const [tasks, setTasks] = React.useState([]);
 
     const [taskInput, setTaskInput] = React.useState('');
-
-    const [taskEdit, setTaskEdit] = React.useState('');
   
     const handleInputText = (event) => {
       setTaskInput(event.target.value);
@@ -170,112 +169,12 @@ function TasksView(props) {
         fetchTasks()
     }
 
-    // const [taskInput, setTaskInput] = React.useState('');
-  
-    // const pickTask = (event) => {
-    //   setTaskInput(event.target.value);
-    // };
-
-
 
     const tasksElements = []
 
     for (const task of tasks) {
-        async function deleteTask() {
-            let response;
-            try {
-                response = await gapi.client.tasks.tasks.delete({
-                    'tasklist': props.list.id,
-                    'task': task.id
-                });
-            } catch (err) {
-                document.getElementById('content').innerText = err.message;
-                return;
-            }
-            fetchTasks()
-        }
-
-        const handleInputEdit = (event) => {
-            setTaskEdit(event.target.value);
-          };
-    
-        const handleEdit = (event) => {
-            if (event.key === 'Enter') {
-                  editTask(taskEdit)
-          }; }
-
-        async function editTask(title) {
-            let response;
-            try {
-                response = await gapi.client.tasks.tasks.update({
-                    'tasklist': props.list.id,
-                    'task': task.id,
-                    'resource': {
-                        'id': task.id,
-                        'title': `${ title }`
-                      }
-                });
-            } catch (err) {
-                document.getElementById('content').innerText = err.message;
-                return;
-            }
-            fetchTasks()
-        }
-        
-
-        async function completeTask(event) {
-            let response;
-            try { 
-                let status = 'completed'
-                if (!event.target.checked) {
-                    status = 'needsAction';
-                }
-                
-                response = await gapi.client.tasks.tasks.update({
-                    'tasklist': props.list.id,
-                    'task': task.id,
-                    'resource': {
-                        'id': task.id,
-                        'status': status,
-                        'title': task.title
-                    }
-                }); 
-            } 
-            catch (err) {
-                document.getElementById('content').innerText = err.message;
-                return;
-            }
-
-            fetchTasks()
-        }
-
-        const style = {}
-
-        if (task.status === 'completed'){
-            style["text-decoration"] = "line-through"  
-        }
-        
         tasksElements.push(
-            <tr key={task.id} list={props.list.id}>
-              <th scope="row"></th>
-              <td><input className="form-check-input" type="checkbox" checked={ task.status === 'completed' }
-              value="" aria-label="Task complete checkbox" onClick={completeTask}></input></td>
-              <td><div id={task.id} style = {style} contentEditable="true" value={taskEdit} onChange={handleInputEdit} onKeyDown={handleEdit}>
-                    { task.title }
-                  </div>
-              </td>
-                <td>
-                <div className="btn-group">
-                    <button type="button" className="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                        Options
-                    </button>
-                    <ul className="dropdown-menu">
-                        {/* <li><button className="dropdown-item" taskId={task.id} onClick={ editTask }>Edit</button></li> */}
-                        <li><button className="dropdown-item" onClick={ deleteTask }>Delete</button></li>
-                    </ul>
-                </div>
-                </td>
-            </tr>
+            <Task key={task.id} task={task} list={props.list} fetchtasks={ fetchTasks }/>
         )
     }
 
@@ -315,7 +214,118 @@ function TasksView(props) {
     )
 }
 
-ReactDOM.render(<MainPage />, document.querySelector('#all-lists'));
 
-// onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-//     // setName(event.target.value);}} id="outlined-controlled" value={task.title}
+function Task(props) {
+    const [taskEdit, setTaskEdit] = React.useState('');
+    const task = props.task
+    const fetchTasks = props.fetchtasks
+
+    React.useEffect(() => {
+        setTaskEdit(task.title)
+    }, [task]);
+
+    async function deleteTask() {
+        let response;
+        try {
+            response = await gapi.client.tasks.tasks.delete({
+                'tasklist': props.list.id,
+                'task': task.id
+            });
+        } catch (err) {
+            document.getElementById('content').innerText = err.message;
+            return;
+        }
+        fetchTasks()
+    }
+
+    const handleEdit = (event) => {
+        console.log(event.target.value)
+        setTaskEdit(event.target.value)
+    }
+        
+    const handleEditEnter = (event) => {
+        console.log(event.key)
+        if (event.key === 'Enter') {
+            console.log(taskEdit)
+            editTask(taskEdit)
+      }; 
+    }
+
+    async function editTask(title) {
+        let response;
+        try {
+            response = await gapi.client.tasks.tasks.update({
+                'tasklist': props.list.id,
+                'task': task.id,
+                'resource': {
+                    'id': task.id,
+                    'title': title
+                  }
+            });
+        } catch (err) {
+            document.getElementById('content').innerText = err.message;
+            return;
+        }
+        fetchTasks()
+    }
+    
+
+    async function completeTask(event) {
+        let response;
+        try { 
+            let status = 'completed'
+            if (!event.target.checked) {
+                status = 'needsAction';
+            }
+            
+            response = await gapi.client.tasks.tasks.update({
+                'tasklist': props.list.id,
+                'task': task.id,
+                'resource': {
+                    'id': task.id,
+                    'status': status,
+                    'title': task.title
+                }
+            }); 
+        } 
+        catch (err) {
+            document.getElementById('content').innerText = err.message;
+            return;
+        }
+
+        fetchTasks()
+    }
+
+    const style = {}
+
+    if (task.status === 'completed'){
+        style["textDecoration"] = "line-through"  
+    }
+
+    // <div id={task.id} style = {style} contentEditable="true" onKeyDown={handleEdit}>
+    //           { taskEdit }
+    //         </div>
+
+    return (
+        <tr list={props.list.id}>
+        <th scope="row"></th>
+        <td><input className="form-check-input" type="checkbox" checked={ task.status === 'completed' }
+        value="" aria-label="Task complete checkbox" onChange={completeTask} onKeyDown={handleEditEnter}></input></td>
+        <td><input type="text" style = {style} value={ taskEdit } onChange={ handleEdit }></input>
+        </td>
+          <td>
+          <div className="btn-group">
+              <button type="button" className="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                  Options
+              </button>
+              <ul className="dropdown-menu">
+                  {/* <li><button className="dropdown-item" taskId={task.id} onClick={ editTask }>Edit</button></li> */}
+                  <li><button className="dropdown-item" onClick={ deleteTask }>Delete</button></li>
+              </ul>
+          </div>
+          </td>
+      </tr>
+    )
+}
+
+ReactDOM.render(<MainPage />, document.querySelector('#all-lists'));
