@@ -110,7 +110,7 @@ function TasksView(props) {
   
     const handleEnter = (event) => {
       if (event.key === 'Enter') {
-            addTask(taskInput)
+            addTask(taskInput, "visible")
             setTaskInput('')
     }; }
     
@@ -134,7 +134,7 @@ function TasksView(props) {
     }, [props.list]);
 
 
-    async function addTask(title) {
+    async function addTask(title, visibility) {
         let response;
         try {
             response = await gapi.client.tasks.tasks.insert({
@@ -147,26 +147,12 @@ function TasksView(props) {
             document.getElementById('content').innerText = err.message;
             return;
         }
-        fetchTasks()
-    }
-
-    async function editTask(title, id) {
-        let response;
-        try {
-            response = await gapi.client.tasks.tasks.update({
-                'tasklist': props.list.id,
-                'task': `${ id }`,
-                'resource': {
-                    'id': `${ id }`,
-                    'title': `${ title }`
-                  }
-            });
-        } catch (err) {
-            document.getElementById('content').innerText = err.message;
-            return;
+        if (visibility === "visible"){
+            fetchTasks()
+        } else if (visibility === "hidden") {
+           const hiddenTask = response.result
+           return hiddenTask
         }
-        
-        fetchTasks()
     }
 
 
@@ -174,7 +160,7 @@ function TasksView(props) {
 
     for (const task of tasks) {
         tasksElements.push(
-            <Task key={task.id} task={task} list={props.list} fetchtasks={ fetchTasks }/>
+            <Task key={task.id} task={task} list={props.list} fetchtasks={ fetchTasks } addtask={addTask}/>
         )
     }
 
@@ -219,6 +205,7 @@ function Task(props) {
     const [taskEdit, setTaskEdit] = React.useState('');
     const task = props.task
     const fetchTasks = props.fetchtasks
+    const addTask = props.addtask
 
     React.useEffect(() => {
         setTaskEdit(task.title)
@@ -238,15 +225,26 @@ function Task(props) {
         fetchTasks()
     }
 
+    async function deleteHiddenTask(id) {
+        let response;
+        try {
+            response = await gapi.client.tasks.tasks.delete({
+                'tasklist': props.list.id,
+                'task': id
+            });
+        } catch (err) {
+            document.getElementById('content').innerText = err.message;
+            return;
+        }
+        fetchTasks()
+    }
+
     const handleEdit = (event) => {
-        console.log(event.target.value)
         setTaskEdit(event.target.value)
     }
         
     const handleEditEnter = (event) => {
-        console.log(event.key)
         if (event.key === 'Enter') {
-            console.log(taskEdit)
             editTask(taskEdit)
       }; 
     }
@@ -259,6 +257,7 @@ function Task(props) {
                 'task': task.id,
                 'resource': {
                     'id': task.id,
+                    'updated': task.updated,
                     'title': title
                   }
             });
@@ -266,6 +265,8 @@ function Task(props) {
             document.getElementById('content').innerText = err.message;
             return;
         }
+        const hidden = await addTask('HIDDEN TASK TO FORCE UPDATED API INFO', 'hidden')
+        deleteHiddenTask(hidden.id)
         fetchTasks()
     }
     
@@ -297,9 +298,14 @@ function Task(props) {
     }
 
     const style = {}
+    const displayAttribute = {}
 
     if (task.status === 'completed'){
         style["textDecoration"] = "line-through"  
+    }
+
+    if (task.title === 'HIDDEN TASK TO FORCE UPDATED API INFO'){
+        displayAttribute["display"] = "none"
     }
 
     // <div id={task.id} style = {style} contentEditable="true" onKeyDown={handleEdit}>
@@ -307,11 +313,12 @@ function Task(props) {
     //         </div>
 
     return (
-        <tr list={props.list.id}>
+        <tr style={ displayAttribute } list={props.list.id}>
         <th scope="row"></th>
         <td><input className="form-check-input" type="checkbox" checked={ task.status === 'completed' }
-        value="" aria-label="Task complete checkbox" onChange={completeTask} onKeyDown={handleEditEnter}></input></td>
-        <td><input type="text" style = {style} value={ taskEdit } onChange={ handleEdit }></input>
+        value="" aria-label="Task complete checkbox" onChange={completeTask} ></input></td>
+        <td><input className="border-0" type="text" style = {style} value={ taskEdit } onChange={ handleEdit } onKeyDown={handleEditEnter} 
+            onBlur={() => editTask(taskEdit)}></input>
         </td>
           <td>
           <div className="btn-group">
