@@ -1,7 +1,8 @@
+// Pulled and edited from oauth-base.html
+
 /* exported gapiLoaded */
 /* exported gisLoaded */
 /* exported handleAuthClick */
-/* exported handleSignoutClick */
 
 // TODO(developer): Set to client ID and API key from the Developer Console
 const CLIENT_ID = '348082355065-ghndkd0dserle2v34n4lbmkamsm3sjoi.apps.googleusercontent.com';
@@ -60,4 +61,3 @@ if (gapiInited && gisInited) {
     // document.getElementById('authorize_button').style.visibility = 'visible';
 }
 }
-

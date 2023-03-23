@@ -60,12 +60,6 @@ function MainPage() {
             return;
         }
         fetchTaskLists()
-        // const options = document.querySelector('.offcanvas')
-        // options.modal = "false"
-        // options.className = "offcanvas offcanvas-end"
-        
-        // const backdrop = document.querySelector('.offcanvas-backdrop')
-        // backdrop.class= "offcanvas-backdrop fade"
         buttonCloseRef.current.click()
     }    
 

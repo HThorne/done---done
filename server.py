@@ -1,13 +1,14 @@
-"""Server for productivity app."""
+"""Server for Done & Done: Productivity App."""
 
-from flask import (Flask, render_template, request, flash, session,
-                   redirect)
+# Requirements 
+from flask import (Flask, render_template, request, flash, session, redirect)
+from passlib.hash import argon2
+from jinja2 import StrictUndefined
+from re import fullmatch
+
+# From my files
 from model import connect_to_db, db
 import crud
-
-from passlib.hash import argon2
-
-from jinja2 import StrictUndefined
 
 app = Flask(__name__)
 app.secret_key = "dev"
@@ -25,12 +26,24 @@ def homepage():
 
 @app.route("/new_user", methods=["POST"])
 def register_user():
-    """Create a new user."""
+    """Create a new user after checking if that user already exists."""
 
     email = request.form.get("email")
     hashed_pass = argon2.hash(request.form.get("password"))
     name = request.form.get("fname")
 
+    # Make a regular expression and use to validate email is in correct format
+    pattern = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b'
+ 
+    # Match pettern and email. If not match, flash warning and redirect home
+    if not fullmatch(pattern, email):
+        flash("Not a valid email format. Try again.", "warning")
+        return redirect("/")
+
+    # Change the case of the first name before entering into db
+    name = name.title()
+
+    # Check if user exists by email which is the primary key
     user = crud.get_user_by_email(email)
     if user:
         flash("Cannot create an account with that email. Try again.", "warning")
@@ -41,6 +54,7 @@ def register_user():
         flash("Account created! Please log in.", "success")
 
     return redirect("/")
+
 
 @app.route("/login", methods=["POST"])
 def process_login():
@@ -64,11 +78,12 @@ def process_login():
 @app.route('/main-page')
 def main_page():
     """View main page."""
+
+    # Only show main page if logged in, redirect otherwise
     if not session.get("user_email"):
         return redirect("/")
     
     return render_template('main-page.html')
-
 
 
 if __name__ == "__main__":
