@@ -23,6 +23,7 @@ function MainPage() {
             throw (resp);
           }
           document.getElementById('authorize_button').innerText = 'Connected. Refresh?';
+          document.getElementById('new-tasklist').placeholder='Add new list'
           await fetchTaskLists();
           };
   
@@ -37,11 +38,69 @@ function MainPage() {
         }
       }
     
+
+      const deleteListButtons = []
+      const editListButtons = []
+
+      for (const list of taskList) {
+        
+        async function deleteList(){
+            let response;
+            try {
+                response = await gapi.client.tasks.tasklists.delete({
+                    'tasklist': list.id,
+                });
+            } catch (err) {
+                document.getElementById('content').innerText = err.message;
+                return;
+            }
+            fetchTaskLists()
+        }
+
+
+        deleteListButtons.push(
+            <li><a key={list.position} className="dropdown-item" href="#" onClick= { deleteList }>{ list.title }</a></li>
+          )
+      }
+
     return (
     <React.Fragment>
-      <button type="button" className="btn btn-secondary" id="authorize_button" onClick={ handleAuthClick }>Authorize</button>
-      <TaskListView taskList={taskList} fetchtasklists={ fetchTaskLists }/>
-      {/* <button type="button" class="btn btn-secondary" id="signout_button" onClick={ handleSignoutClick }>Sign Out</button>  */}
+        <nav className="navbar bg-body-tertiary sticky-top" >
+            <div className="container-fluid">
+                <a className="navbar-brand" href="#">Done and Done</a>
+                <ul className="navbar-nav me-auto mb-auto">
+                <li key="auth-button" className="nav-item">
+                    <a className="nav-link" href="#" role="button" id="authorize_button" onClick={ handleAuthClick }>
+                        Authorize
+                    </a>
+                </li>
+                </ul>
+                <button className="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar">
+                <span className="navbar-toggler-icon"></span>
+                </button>
+                <div id="options-menu" className="offcanvas offcanvas-end" tabIndex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
+                <div className="offcanvas-header">
+                    <h5 className="offcanvas-title" id="offcanvasNavbarLabel">Options</h5>
+                    <button type="button" className="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                </div>
+                <div className="offcanvas-body">
+                    <ul className="navbar-nav justify-content-end flex-grow-1 pe-3">
+                        <li key="delete" className="nav-item dropdown">
+                            <a className="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" data-bs-auto-close="inside" aria-expanded="false">
+                                Delete a list
+                            </a>
+                            <ul className="dropdown-menu border-0">
+                                { deleteListButtons }
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+        </nav>
+        <div>
+        <TaskListView taskList={taskList} fetchtasklists={ fetchTaskLists }/>
+        </div>
     </React.Fragment>
     )
 }
@@ -84,11 +143,11 @@ function TaskListView(props) {
     }
   
   return (
-    <div className="accordion" id="accordionAllLists">
+    <div className="accordion accordion-flush" id="accordionAllLists">
         { taskLists } 
         <div className="accordion-item">                 
         <h2 className="accordion-header" id="add_new_list">           
-                <input type="text" className="form-control border-0" placeholder="Add a new list" 
+                <input id="new-tasklist" type="text" className="form-control border-0" placeholder="Connect to Google Tasks by clicking Authorize" 
                 aria-label="Add task list" value={taskListInput} onChange={handleInputList} onKeyDown={handleListEnter}>
                 </input>
         </h2>
@@ -169,7 +228,7 @@ function TasksView(props) {
             <div className="accordion-item">
                 <h2 className="accordion-header" id={props.list.title}>
                     <button className="accordion-button collapsed" type="button" 
-                    data-bs-toggle="collapse" data-bs-target={`#${props.list.id}`} aria-expanded="true" aria-controls={props.list.id}>
+                    data-bs-toggle="collapse" data-bs-target={`#${props.list.id}`} aria-expanded="false" aria-controls={props.list.id}>
                     {props.list.title}
                     </button>
                 </h2>
