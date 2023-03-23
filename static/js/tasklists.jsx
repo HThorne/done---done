@@ -1,5 +1,8 @@
 function MainPage() {
     const [taskList, setTaskList] = React.useState([]);
+    const [editListId, setEditListId] = React.useState('')
+    const [newName, setNewName] = React.useState('')
+    const buttonCloseRef = React.useRef()
 
     async function fetchTaskLists() {
         let response;
@@ -37,7 +40,34 @@ function MainPage() {
           tokenClient.requestAccessToken({prompt: ''});
         }
       }
+
+      const handleNewName = (event) => {
+        setNewName(event.target.value)
+    }
     
+    async function editList() {
+        let response;
+        try {
+            response = await gapi.client.tasks.tasklists.update({
+                'tasklist': editListId,
+                'resource': {
+                    'id': editListId,
+                    'title': newName
+                  }
+            });
+        } catch (err) {
+            document.getElementById('content').innerText = err.message;
+            return;
+        }
+        fetchTaskLists()
+        // const options = document.querySelector('.offcanvas')
+        // options.modal = "false"
+        // options.className = "offcanvas offcanvas-end"
+        
+        // const backdrop = document.querySelector('.offcanvas-backdrop')
+        // backdrop.class= "offcanvas-backdrop fade"
+        buttonCloseRef.current.click()
+    }    
 
       const deleteListButtons = []
       const editListButtons = []
@@ -59,17 +89,30 @@ function MainPage() {
 
 
         deleteListButtons.push(
-            <li><a key={list.position} className="dropdown-item" href="#" onClick= { deleteList }>{ list.title }</a></li>
+            <li key={list.id}><a className="dropdown-item" href="#" data-bs-dismiss="offcanvas" onClick= { deleteList }>{ list.title }</a></li>
           )
-      }
+      
+        function captureNewName(){
+
+        }
+
+
+        editListButtons.push(
+            <li key={list.id}>
+            <a className="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#exampleModal" role="button" data-bs-whatever={list} onClick={()=>setEditListId(list.id)}>{ list.title }</a>
+            </li>
+
+      )
+    }
+
 
     return (
     <React.Fragment>
         <nav className="navbar bg-body-tertiary sticky-top" >
             <div className="container-fluid">
-                <a className="navbar-brand" href="#">Done and Done</a>
+                <a className="navbar-brand" href="#">Done & Done</a>
                 <ul className="navbar-nav me-auto mb-auto">
-                <li key="auth-button" className="nav-item">
+                <li className="nav-item">
                     <a className="nav-link" href="#" role="button" id="authorize_button" onClick={ handleAuthClick }>
                         Authorize
                     </a>
@@ -81,11 +124,19 @@ function MainPage() {
                 <div id="options-menu" className="offcanvas offcanvas-end" tabIndex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
                 <div className="offcanvas-header">
                     <h5 className="offcanvas-title" id="offcanvasNavbarLabel">Options</h5>
-                    <button type="button" className="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                    <button ref={buttonCloseRef} type="button" className="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
                 </div>
                 <div className="offcanvas-body">
                     <ul className="navbar-nav justify-content-end flex-grow-1 pe-3">
-                        <li key="delete" className="nav-item dropdown">
+                        <li className="nav-item dropdown">
+                            <a className="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" data-bs-auto-close="inside" aria-expanded="false">
+                                Rename a List
+                            </a>
+                            <ul className="dropdown-menu border-0">
+                                { editListButtons }
+                            </ul>
+                        </li>
+                        <li className="nav-item dropdown">
                             <a className="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" data-bs-auto-close="inside" aria-expanded="false">
                                 Delete a list
                             </a>
@@ -99,6 +150,21 @@ function MainPage() {
             </div>
         </nav>
         <div>
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header border-0">
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body border-0">
+      <input type="text" className="form-control" placeholder="Type new name here" aria-label="Rename list" value={newName} onChange={ handleNewName }></input>
+      </div>
+      <div class="modal-footer border-0">
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal" onClick={ editList }>Save</button>
+      </div>
+    </div>
+  </div>
+</div>
         <TaskListView taskList={taskList} fetchtasklists={ fetchTaskLists }/>
         </div>
     </React.Fragment>
