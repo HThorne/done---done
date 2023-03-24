@@ -191,6 +191,16 @@ function MainPage() {
                         </div>
                     </div>
                 </div>
+                <figure className="text-center">
+                    <blockquote className="blockquote">
+                        <p id="main-quest-div">
+                            Happiness is like those palaces in fairytales whose gates are guarded by dragons: We must fight in order to conquer it.
+                        </p>
+                    </blockquote>
+                    <figcaption id="quote-author" className="blockquote-footer">
+                        Alexandre Dumas <cite id="quote-source" title="Source Title"></cite>
+                    </figcaption>
+                </figure>
                 <TaskAccordion taskList={taskList} fetchtasklists={fetchTaskLists}/>
             </div>
         </React.Fragment>
@@ -399,6 +409,19 @@ function Task(props) {
     }, [task]);
 
     /**
+    * Put indicated task title at the top of the page. 
+    * For user to indicate their primary focus to themselves.
+    */
+    function mainQuest() {
+        // Stop task display if task is already complete. 
+        if (task.status === 'completed'){
+            return  
+        }
+        document.getElementById('main-quest-div').innerHTML = `<strong>Main Quest: ${task.title}</strong>`
+        document.getElementById('quote-author').style.display = "none"
+    }
+
+    /**
     * Request to delete task with id and list id as parameter. Fetch to get updated info.
     */
     async function deleteTask(id) {
@@ -456,13 +479,12 @@ function Task(props) {
     * Request to update task status based on if checkbox is checked.
     */
     async function completeTask(event) {
-        let response;
-        try { 
-            let status = 'completed';
+        let status = 'completed';
             if (!event.target.checked) {
                 status = 'needsAction';
             }
-            
+        let response;
+        try { 
             response = await gapi.client.tasks.tasks.update({
                 'tasklist': props.list.id,
                 'task': task.id,
@@ -482,6 +504,13 @@ function Task(props) {
         // data = await data.json()
         // console.log(data)
         fetchTasks();
+        // Replace Main Quest with quote if the task there gets marked complete.
+        let text = document.getElementById('main-quest-div').innerHTML
+        if (text.includes(task.title) && status === 'completed') {
+            document.getElementById('main-quest-div').innerHTML = 'The moment you doubt whether you can fly, you cease forever to be able to do it'
+            document.getElementById('quote-author').style.display = "block"
+            document.getElementById('quote-author').innerHTML = 'J.M. Barrie <cite id="quote-source" title="Source Title">Peter Pan</cite>'
+        }
     }
 
     const style = {};
@@ -518,7 +547,11 @@ function Task(props) {
                         Options
                     </button>
                     <ul className="dropdown-menu">
-                        <li><button className="dropdown-item"> Main Quest </button></li>
+                        <li>
+                            <button className="dropdown-item" onClick={mainQuest}> 
+                                Main Quest 
+                            </button>
+                        </li>
                         <li>
                             <button className="dropdown-item" onClick={ () => deleteTask(task.id) }> 
                                 Delete 
