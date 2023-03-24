@@ -9,14 +9,13 @@
   <!-- Mount jsx on element with ids. -->
   <div class="container-fluid" id="all-lists" style="padding-left: 0px; padding-right: 0px;">
   
-  <pre id="content" style="white-space: pre-wrap;"></pre>
+  <pre id="api-errors" style="white-space: pre-wrap;"></pre>
 
 
+  <script src="/static/js/secrets.js" type='text/javascript'></script>
   <script src="/static/js/oauth.js" type="text/javascript"></script>
-  <script async defer src="https://apis.google.com/js/api.js" 
-  onload="gapiLoaded()"></script>
-  <script async defer src="https://accounts.google.com/gsi/client" 
-  onload="gisLoaded()"></script>
+  <script async defer src="https://apis.google.com/js/api.js" onload="gapiLoaded()"></script>
+  <script async defer src="https://accounts.google.com/gsi/client" onload="gisLoaded()"></script>
   <script src="/static/js/tasklists.jsx" type="text/jsx"></script>
 {% endblock %}
 

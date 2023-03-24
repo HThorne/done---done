@@ -5,8 +5,8 @@
 /* exported handleAuthClick */
 
 // TODO(developer): Set to client ID and API key from the Developer Console
-const CLIENT_ID = '348082355065-ghndkd0dserle2v34n4lbmkamsm3sjoi.apps.googleusercontent.com';
-const API_KEY = 'AIzaSyDoDns2vq9faPJbE10iVsLsmdLM8xRgvBI';
+const CLIENT_ID = secrets.CLIENT_ID;
+const API_KEY = secrets.API_KEY
 
 // Discovery doc URL for APIs used by the quickstart
 const DISCOVERY_DOC = 'https://www.googleapis.com/discovery/v1/apis/tasks/v1/rest';

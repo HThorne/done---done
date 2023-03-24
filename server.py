@@ -1,10 +1,11 @@
 """Server for Done & Done: Productivity App."""
 
 # Requirements 
-from flask import (Flask, render_template, request, flash, session, redirect)
+from flask import (Flask, render_template, request, flash, session, redirect, jsonify)
 from passlib.hash import argon2
 from jinja2 import StrictUndefined
 from re import fullmatch
+from os import environ
 
 # From my files
 from model import connect_to_db, db
@@ -13,6 +14,9 @@ import crud
 app = Flask(__name__)
 app.secret_key = "dev"
 app.jinja_env.undefined = StrictUndefined
+
+API_KEY = environ.get('API_KEY')
+CLIENT_ID = environ.get('CLIENT_ID')
 
 
 @app.route('/')
@@ -84,6 +88,17 @@ def main_page():
         return redirect("/")
     
     return render_template('main-page.html')
+
+
+@app.route('/googlecredentials.json')
+def send_credentials():
+    """Put API_KEY and CLIENT ID in dict and jsonify for frontend."""
+    credentials = {
+        'API_KEY': API_KEY,
+        'CLIENT_ID': CLIENT_ID
+    }
+
+    return jsonify(credentials)
 
 
 if __name__ == "__main__":
