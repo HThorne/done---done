@@ -7,37 +7,7 @@
 
 {% block body %}
   <!-- Mount jsx on element with ids. -->
-<div class="container" id="create_login">
-  <h2>Create an Account</h2>
-  
-  <form action="/new_user" method="POST">
-    <p> 
-      First Name <input type="text" name="fname" required="true" aria-required></input>
-    </p>
-    <p> 
-      Email <input type="text" name="email" required="true" aria-required></input>
-    </p>
-    <p> 
-      Password <input type="password" name="password" required="true" aria-required></input>
-    </p>
-    <p>
-      <input type="submit"></input>
-    </p>
-  </form>
+<div class="container" id="create_login"></div>
 
-  <h2>Log In</h2>
-
-  <form action="/login" method="POST">
-    <p> 
-      Email <input type="text" name="email"></input>
-    </p>
-    <p> 
-      Password <input type="password" name="password"></input>
-    </p>
-    <p>
-      <input type="submit"></input>
-    </p>
-  </form>
-</div>
-
+<script src="/static/js/homepage.jsx" type='text/jsx'></script>
 {% endblock %}
