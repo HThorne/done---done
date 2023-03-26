@@ -164,6 +164,11 @@ function MainPage() {
                                     {deleteListButtons}
                                 </ul>
                             </li>
+                            <li className="nav-item">
+                                <a className="nav-link" href="/logout" action="/logout" role="button">
+                                    Logout
+                                </a>
+                            </li>
                         </ul>
                     </div>
                 </div>

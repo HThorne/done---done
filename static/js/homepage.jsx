@@ -64,7 +64,7 @@ function HomePage() {
                         </div>
                     </div>
                     <div className="mt-3">
-                        <button type="submit" class="btn btn-secondary mb-3"> Submit </button>
+                        <button type="submit" className="btn btn-secondary mb-3"> Submit </button>
                     </div>
                 </form>
             
@@ -95,7 +95,7 @@ function HomePage() {
                         </div>
                     </div>
                     <div className="mt-3">
-                        <button type="submit" class="btn btn-secondary mb-3"> Submit </button>
+                        <button type="submit" className="btn btn-secondary mb-3"> Submit </button>
                     </div>
                 </form>
         </React.Fragment>

@@ -80,9 +80,20 @@ def process_login():
     else:
         # Store the user's email in session
         session["user_email"] = user.email
-        flash(f"Welcome back, {user.name}!", "success")
+        flash(f"Welcome back, {user.fname}!", "success")
 
     return redirect("/main-page")
+
+@app.route("/logout")
+def process_logout():
+    """Process user logout."""
+
+    email = session.get("user_email")
+    user = crud.get_user_by_email(email)
+    del session["user_email"]
+    flash(f"See you next time, {user.fname}!", "success")
+
+    return redirect("/")
 
 
 @app.route('/main-page')
