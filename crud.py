@@ -2,10 +2,17 @@
 
 from model import db, User, connect_to_db
 
-def create_user(email, password, name):
+def create_user(email, password, fname, rpg_class):
     """Create and return a new user."""
 
-    user = User(email=email, password=password, name=name, total_score=0)
+    user = User(
+                email=email, 
+                password=password, 
+                fname=fname, 
+                rpg_class=rpg_class, 
+                total_score=0,
+                level = 1
+            )
 
     return user
 

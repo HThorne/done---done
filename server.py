@@ -33,6 +33,8 @@ def register_user():
     """Create a new user after checking if that user already exists."""
 
     email = request.form.get("email")
+    password = request.form.get("password")
+    rpg_class = request.form.get("class-input")
     hashed_pass = argon2.hash(request.form.get("password"))
     name = request.form.get("fname")
 
@@ -43,6 +45,10 @@ def register_user():
     if not fullmatch(pattern, email):
         flash("Not a valid email format. Try again.", "warning")
         return redirect("/")
+    
+    if not len(password) > 8:
+        flash("Please enter longer password.", "warning")
+        return redirect("/")
 
     # Change the case of the first name before entering into db
     name = name.title()
@@ -52,7 +58,8 @@ def register_user():
     if user:
         flash("Cannot create an account with that email. Try again.", "warning")
     else:
-        user = crud.create_user(email, hashed_pass, name)
+        user = crud.create_user(email, hashed_pass, name, rpg_class)
+        print(user.rpg_class)
         db.session.add(user)
         db.session.commit()
         flash("Account created! Please log in.", "success")

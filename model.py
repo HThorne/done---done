@@ -14,9 +14,11 @@ class User(db.Model):
                         primary_key=True)
     email = db.Column(db.String, unique=True, nullable=False)
     password = db.Column(db.String, nullable=False)
-    name = db.Column(db.String, nullable=False)
+    fname = db.Column(db.String, nullable=False)
+    rpg_class = db.Column(db.String, nullable=False)
     total_score = db.Column(db.Integer)
-
+    level = db.Column(db.Integer)
+    
     def __repr__(self):
         return f'<User user_id={self.user_id} email={self.email}>' 
 

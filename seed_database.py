@@ -18,9 +18,10 @@ model.db.create_all()
 for n in range(10):
     email = f'user{n}@test.com' 
     password = argon2.hash('Test')
-    name = 'Tester'
+    fname = 'Tester'
+    rpg_class = 'bard'
 
-    test_user = crud.create_user(email, password, name)
+    test_user = crud.create_user(email, password, fname, rpg_class)
     model.db.session.add(test_user)
 
 
