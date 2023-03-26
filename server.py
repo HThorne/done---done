@@ -59,7 +59,6 @@ def register_user():
         flash("Cannot create an account with that email. Try again.", "warning")
     else:
         user = crud.create_user(email, hashed_pass, name, rpg_class)
-        print(user.rpg_class)
         db.session.add(user)
         db.session.commit()
         flash("Account created! Please log in.", "success")

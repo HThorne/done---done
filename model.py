@@ -16,11 +16,26 @@ class User(db.Model):
     password = db.Column(db.String, nullable=False)
     fname = db.Column(db.String, nullable=False)
     rpg_class = db.Column(db.String, nullable=False)
+    rpg_ability = db.Column(db.String, nullable=False)
     total_score = db.Column(db.Integer)
     level = db.Column(db.Integer)
-    
+
+    tasks = db.relationship("Task", back_populates="users")
+
     def __repr__(self):
         return f'<User user_id={self.user_id} email={self.email}>' 
+    
+class Task(db.Model):
+    __tablename__ = "tasks"
+
+    task_id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.user_id"))
+    score = db.Column(db.Integer)
+
+    users = db.relationship("User", back_populates="tasks")
+
+    def __repr__(self):
+        return f"<Task task_id={self.task_id} user_id={self.user_id}>"
 
 
 def connect_to_db(flask_app, db_uri="postgresql:///productivity", echo=True):
