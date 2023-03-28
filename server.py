@@ -18,6 +18,7 @@ app.jinja_env.undefined = StrictUndefined
 API_KEY = environ.get('API_KEY')
 CLIENT_ID = environ.get('CLIENT_ID')
 
+points_id = 0
 
 @app.route('/')
 def homepage():
@@ -46,7 +47,7 @@ def register_user():
         flash("Not a valid email format. Try again.", "warning")
         return redirect("/")
     
-    if not len(password) > 8:
+    if not len(password) > 7:
         flash("Please enter longer password.", "warning")
         return redirect("/")
 
@@ -107,16 +108,55 @@ def main_page():
     return render_template('main-page.html')
 
 
-@app.route('/googlecredentials.json')
-def send_credentials():
-    """Put API_KEY and CLIENT ID in dict and jsonify for frontend."""
-    credentials = {
-        'API_KEY': API_KEY,
-        'CLIENT_ID': CLIENT_ID
+@app.route('/points.json', methods=["POST"])
+def process_points():
+    """Process user points and return as JSON."""
+    email = session.get("user_email")
+    print(email)
+    user = crud.get_user_by_email(email)
+    print(user)
+    completed_tasks = request.json.get("completed")
+    scores = []
+
+    global points_id
+    if points_id >= 2000000:
+        points_id = 0
+    
+    points_id += 1
+
+
+    for task in completed_tasks:
+        if not crud.get_task_by_id(task):
+            logged_task = crud.create_task(task, user)
+            scores.append(logged_task.score)
+            db.session.add(logged_task)
+
+    db.session.commit()
+
+    total = crud.get_total_score(user)
+
+    if total > 500:
+        user.level += 1
+        archive_tasks = crud.get_all_active_tasks_by_user(user.user_id)
+        
+        for task in archive_tasks:
+            task.status = "archive"
+        
+        total = crud.get_total_score(user)
+        db.session.commit()
+
+
+    points = {
+        "ability": user.rpg_ability,
+        "rpg_class": user.rpg_class,
+        "level": user.level,
+        "total_score": total,
+        "new_scores": scores,
+        "toast_id": points_id
     }
 
-    return jsonify(credentials)
-
+    return jsonify(points)
+    
 
 if __name__ == "__main__":
     connect_to_db(app)

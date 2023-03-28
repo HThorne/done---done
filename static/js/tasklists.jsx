@@ -196,7 +196,8 @@ function MainPage() {
                         </div>
                     </div>
                 </div>
-                <figure className="text-center">
+
+                <figure className="text-center mt-3">
                     <blockquote className="blockquote">
                         <p id="main-quest-div">
                             Happiness is like those palaces in fairytales whose gates are guarded by dragons: We must fight in order to conquer it.
@@ -207,6 +208,10 @@ function MainPage() {
                     </figcaption>
                 </figure>
                 <TaskAccordion taskList={taskList} fetchtasklists={fetchTaskLists}/>
+                <div id="points-display">
+                </div>
+            </div>                
+            <div id="toast-notif" class="toast-container bottom-0 end-0 p-3">
             </div>
         </React.Fragment>
     )
@@ -285,6 +290,9 @@ function TaskAccordion(props) {
 function TaskListView(props) {
     const [tasks, setTasks] = React.useState([]);
     const [taskInput, setTaskInput] = React.useState('');
+    const [userClass, setUserClass] = React.useState('')
+    const [userLevel, setUserLevel] = React.useState(0)
+    const [totalScore, setTotalScore] = React.useState(0)
     
     /**
     * Request to get all tasks returned in JSON data as an array under items.
@@ -301,13 +309,66 @@ function TaskListView(props) {
         }
         const tasksResult = response.result.items;
         setTasks(tasksResult);
+        
+        // Send task info to server.py, recieve point information to be displayed.
+        const completedTasks = []
+        
+        for (const task of tasksResult) {
+            if (task.status === 'completed'){
+                completedTasks.push(task.id)
+            }
+        }
+        
+        const completedData = {
+            completed: completedTasks
+        }
+        console.log(completedData)
+        
+        let data = await fetch('/points.json', {
+            method: 'POST',
+            body: JSON.stringify(completedData),
+            headers: {
+            'Content-Type': 'application/json',
+        },
+      })
+        data = await data.json()
+        // Set data that is constantly displayed and send other to be in notification.
+        setUserClass(data.rpg_class)
+        setUserLevel(data.level)        
+        setTotalScore(data.total_score)
+            
+        if (data.new_scores !== []) {
+            for (const score of data.new_scores) {
+                document.getElementById('toast-notif').insertAdjacentHTML('beforeend', 
+                `<div class="toast notification-${data.toast_id}" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="toast-header">
+                    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+                <div class="toast-body">
+                    +${score} XP  &  +2 ${data.ability} modifier.
+                </div>
+            </div>`
+                )
+            }
+            const toastLiveExample = document.querySelectorAll(`.notification-${data.toast_id}`)
+            
+            for (const toast of toastLiveExample) {
+                const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toast)
+                toastBootstrap.show()
+            }
+        }
     }    
-    
+
     // Fetch tasks on load and every change to list.
     React.useEffect(() => {
         fetchTasks()
     }, [props.list]);
 
+    // Update score display with every change to totalScore.
+    React.useEffect(() => {
+        document.getElementById('points-display').innerText = `LEVEL ${userLevel} ${userClass} 
+        \n  ${totalScore} XP`
+    }, [totalScore]);
 
     // Track changes from input and updates the state of the taskInput variable
     const handleInputText = (event) => {
@@ -440,6 +501,13 @@ function Task(props) {
             document.getElementById('api-errors').innerText = err.message;
             return;
         }
+        // Replace Main Quest with quote if the task there gets deleted.
+        let text = document.getElementById('main-quest-div').innerHTML
+        if (text.includes(task.title)) {
+            document.getElementById('main-quest-div').innerHTML = 'We live in a fantasy world, a world of illusion. The great task in life is to find reality. But given the state of the world, is it wise?'
+            document.getElementById('quote-author').style.display = "block"
+            document.getElementById('quote-author').innerHTML = 'Iris Murdoch'
+        }
         fetchTasks();
     }
 
@@ -504,10 +572,7 @@ function Task(props) {
             document.getElementById('api-errors').innerText = err.message;
             return;
         }
-        // Send task info to server.py, recieve point information to be displayed.
-        // let data = await fetch('url', {DATA})
-        // data = await data.json()
-        // console.log(data)
+
         fetchTasks();
         // Replace Main Quest with quote if the task there gets marked complete.
         let text = document.getElementById('main-quest-div').innerHTML
@@ -568,5 +633,6 @@ function Task(props) {
         </tr>
     )
 }
+ 
 
 ReactDOM.render(<MainPage />, document.querySelector('#all-lists'));

@@ -19,7 +19,7 @@ for n in range(10):
     email = f'user{n}@test.com' 
     password = argon2.hash('Test')
     fname = 'Tester'
-    rpg_class = 'bard'
+    rpg_class = 'Bard'
 
     test_user = crud.create_user(email, password, fname, rpg_class)
     model.db.session.add(test_user)

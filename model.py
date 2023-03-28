@@ -28,9 +28,10 @@ class User(db.Model):
 class Task(db.Model):
     __tablename__ = "tasks"
 
-    task_id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey("users.user_id"))
-    score = db.Column(db.Integer)
+    task_id = db.Column(db.String, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.user_id"), nullable=False)
+    score = db.Column(db.Integer, nullable=False)
+    status = db.Column(db.String, nullable=False)
 
     users = db.relationship("User", back_populates="tasks")
 

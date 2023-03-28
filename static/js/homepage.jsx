@@ -26,11 +26,11 @@ function HomePage() {
                         <div className="col-auto">
                             <select name="class-input" className="form-select" aria-label="Select class" 
                             required={true} aria-required="true" id="classInput">
-                                <option value="barbarian">Barbarian</option>
-                                <option value="bard">Bard</option>
-                                <option value="druid">Druid</option>
-                                <option value="rogue">Rogue</option>
-                                <option value="wizard">Wizard</option>
+                                <option value="Barbarian">Barbarian</option>
+                                <option value="Bard">Bard</option>
+                                <option value="Druid">Druid</option>
+                                <option value="Rogue">Rogue</option>
+                                <option value="Wizard">Wizard</option>
                             </select>
                         </div>
                     </div>
