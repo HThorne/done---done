@@ -112,9 +112,7 @@ def main_page():
 def process_points():
     """Process user points and return as JSON."""
     email = session.get("user_email")
-    print(email)
     user = crud.get_user_by_email(email)
-    print(user)
     completed_tasks = request.json.get("completed")
     scores = []
 
@@ -135,7 +133,7 @@ def process_points():
 
     total = crud.get_total_score(user)
 
-    if total > 500:
+    if total > 250:
         user.level += 1
         archive_tasks = crud.get_all_active_tasks_by_user(user.user_id)
         
@@ -156,7 +154,43 @@ def process_points():
     }
 
     return jsonify(points)
+
+@app.route('/changeclass.json', methods=["POST"])
+def update_rpg_class():
+    """Process user's updated class and return as JSON."""
+
+    email = session.get("user_email")
+    user = crud.get_user_by_email(email)
+    new_class = request.json.get("newClass")
+
+    if new_class != user.rpg_class:
+        user.rpg_class = new_class
+
+        if new_class == 'Barbarian':
+            user.rpg_ability = 'strength'
+        elif new_class == 'Bard':
+            user.rpg_ability = 'charisma'
+        elif new_class == 'Druid':
+            user.rpg_ability = 'wisdom'
+        elif new_class == 'Rogue':
+            user.rpg_ability = 'dexterity'
+        elif new_class == 'Wizard':
+            user.rpg_ability = 'intelligence'
+        else:
+            user.rpg_ability = 'stupidity'
+
+        user.level = 1
+        user.total_score = 0
+        db.session.commit()
     
+    class_info = {
+        "rpg_class": user.rpg_class,
+        "level": user.level,
+        "total_score": user.total_score,
+    }
+
+    return jsonify(class_info)
+
 
 if __name__ == "__main__":
     connect_to_db(app)

@@ -118,6 +118,23 @@ function MainPage() {
         )
     }
 
+    /**
+    * Request to change user's RPG class. Fetch to get updated info.
+    */
+    async function changeClass(newClass) {
+        let data = await fetch('/changeclass.json', {
+                method: 'POST',
+                body: JSON.stringify({newClass: newClass}),
+                headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+        data = await data.json();
+
+        document.getElementById('points-display').innerText = `LEVEL ${data.level} ${data.rpg_class} 
+        \n  ${data.total_score} XP`
+    }
+
 
     return (
         <React.Fragment>
@@ -164,6 +181,41 @@ function MainPage() {
                                     {deleteListButtons}
                                 </ul>
                             </li>
+                            <li className="nav-item dropdown">
+                                <a className="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" 
+                                data-bs-auto-close="inside" aria-expanded="false">
+                                    Change your class
+                                </a>
+                                <ul className="dropdown-menu border-0">
+                                    <li>
+                                        <a className="dropdown-item" href="#"  data-bs-dismiss="offcanvas"
+                                        onClick={()=>changeClass("Barbarian")}>
+                                            Barbarian
+                                        </a>
+                                        <a className="dropdown-item" href="#"  data-bs-dismiss="offcanvas"
+                                        onClick={()=>changeClass("Bard")}>
+                                            Bard
+                                        </a>
+                                        <a className="dropdown-item" href="#"  data-bs-dismiss="offcanvas"
+                                        onClick={()=>changeClass("Druid")}>
+                                            Druid
+                                        </a>
+                                        <a className="dropdown-item" href="#"  data-bs-dismiss="offcanvas"
+                                        onClick={()=>changeClass("Rogue")}>
+                                            Rogue
+                                        </a>
+                                        <a className="dropdown-item" href="#"  data-bs-dismiss="offcanvas"
+                                        onClick={()=>changeClass("Wizard")}>
+                                            Wizard
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>                            
+                            <li className="nav-item">
+                                <a role="button" className="nav-link" data-bs-toggle="modal" data-bs-target="#helpModal">
+                                    Help
+                                </a>
+                            </li>
                             <li className="nav-item">
                                 <a className="nav-link" href="/logout" action="/logout" role="button">
                                     Logout
@@ -196,7 +248,33 @@ function MainPage() {
                         </div>
                     </div>
                 </div>
-
+                <div className="modal fade" tabIndex="-1" id="helpModal" tabIndex="-1" 
+                aria-labelledby="helpModalLabel" aria-hidden="true">
+                    <div className="modal-dialog">
+                        <div className="modal-content">
+                        <div className="modal-header">
+                            <h5 className="modal-title">Welcome adventurers!</h5>
+                            <button type="button" className="btn-close" data-bs-dismiss="modal" 
+                            aria-label="Close">
+                            </button>
+                        </div>
+                        <div className="modal-body">
+                            <p> 
+                                Once you connect to one of your Google accounts, you can add tasks to an 
+                                existing list or create a new list to add to. As you complete tasks, you'll 
+                                gain experience points (XP) and level up. Adding, editing, and deleting lists 
+                                and/or tasks will sync with the Google account you chose, but you can use 
+                                any Google account to gain XP. Ex. you can switch from your school account 
+                                to your personal account and you'll still gain XP! <br></br> 
+                                <br></br>
+                                <strong>WARNING:</strong><br></br>
+                                If you decide to change class, you will lose all your XP and start 
+                                at a level 1 in your new class. Old class data is not saved.
+                            </p>
+                        </div>
+                        </div>
+                    </div>
+                </div>
                 <figure className="text-center mt-3">
                     <blockquote className="blockquote">
                         <p id="main-quest-div">
@@ -211,7 +289,7 @@ function MainPage() {
                 <div id="points-display">
                 </div>
             </div>                
-            <div id="toast-notif" class="toast-container bottom-0 end-0 p-3">
+            <div id="toast-notif" className="toast-container bottom-0 end-0 p-3">
             </div>
         </React.Fragment>
     )
@@ -315,36 +393,38 @@ function TaskListView(props) {
         
         for (const task of tasksResult) {
             if (task.status === 'completed'){
-                completedTasks.push(task.id)
+                completedTasks.push(task.id);
             }
         }
         
         const completedData = {
             completed: completedTasks
         }
-        console.log(completedData)
         
         let data = await fetch('/points.json', {
-            method: 'POST',
-            body: JSON.stringify(completedData),
-            headers: {
-            'Content-Type': 'application/json',
-        },
-      })
-        data = await data.json()
+                method: 'POST',
+                body: JSON.stringify(completedData),
+                headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+        data = await data.json();
         // Set data that is constantly displayed and send other to be in notification.
-        setUserClass(data.rpg_class)
-        setUserLevel(data.level)        
-        setTotalScore(data.total_score)
+        setUserClass(data.rpg_class);
+        setUserLevel(data.level);     
+        setTotalScore(data.total_score);
+
             
         if (data.new_scores !== []) {
             for (const score of data.new_scores) {
                 document.getElementById('toast-notif').insertAdjacentHTML('beforeend', 
-                `<div class="toast notification-${data.toast_id}" role="alert" aria-live="assertive" aria-atomic="true">
-                <div class="toast-header">
+                `<div class="toast notification-${data.toast_id}" role="alert" aria-live="polite" aria-atomic="true">
+                <div class="toast-header border-0">
+                    <strong class="me-auto">Experience gained!</strong>
+                    <small class="text-body-secondary">just now</small>
                     <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
                 </div>
-                <div class="toast-body">
+                <div class="toast-body border-0">
                     +${score} XP  &  +2 ${data.ability} modifier.
                 </div>
             </div>`
