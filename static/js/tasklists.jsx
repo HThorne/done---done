@@ -635,9 +635,7 @@ function Task(props) {
         // Replace Main Quest with quote if the task there gets deleted.
         let text = document.getElementById('main-quest-div').innerHTML
         if (text.includes(task.title)) {
-            document.getElementById('main-quest-div').innerHTML = 'We live in a fantasy world, a world of illusion. The great task in life is to find reality. But given the state of the world, is it wise?'
-            document.getElementById('quote-author').style.display = "block"
-            document.getElementById('quote-author').innerHTML = 'Iris Murdoch'
+            randomQuote();
         }
         fetchTasks();
     }
@@ -708,12 +706,28 @@ function Task(props) {
         // Replace Main Quest with quote if the task there gets marked complete.
         let text = document.getElementById('main-quest-div').innerHTML
         if (text.includes(task.title) && status === 'completed') {
-            document.getElementById('main-quest-div').innerHTML = 'The moment you doubt whether you can fly, you cease forever to be able to do it.'
-            document.getElementById('quote-author').style.display = "block"
-            document.getElementById('quote-author').innerHTML = 'J.M. Barrie <cite id="quote-source" title="Source Title">Peter Pan</cite>'
+            randomQuote();
         }
     }
 
+    /**
+    * Request for a random quote.
+    */
+    async function randomQuote() {
+        let data = await fetch('/quote.json');
+  
+        data = await data.json();
+        console.log(data)
+
+        document.getElementById('main-quest-div').innerHTML = `${data.quote}`;
+        document.getElementById('quote-author').style.display = "block";
+        if (data.source) {
+            document.getElementById('quote-author').innerHTML = `${data.author}   <cite id="quote-source" title="Source Title">${data.source}</cite>`;
+        } else {
+            document.getElementById('quote-author').innerHTML = `${data.author}`
+        }
+    }
+    
     const style = {};
     const displayAttribute = {};
 

@@ -214,6 +214,34 @@ def random_quest():
 
     return jsonify(random_task)
 
+@app.route('/quote.json')
+def find_quote():
+    """Return a quote with author and source as JSON."""
+
+    quotes = open('motivational-quotes.csv')
+    lines = []
+
+    for line in quotes:
+        line = line.rstrip()
+        lines.append(line)
+
+    quote = choice(lines)
+    quote = quote.split("|")
+
+    quote_info = {
+        "quote": quote[0],
+        "author": quote[1],
+        "source": quote[2]
+    }
+
+    if quote_info["source"] == " Unknown":
+        del quote_info["source"]
+
+    print(quote_info)
+
+    return jsonify(quote_info)
+
+
 if __name__ == "__main__":
     connect_to_db(app)
     app.run(host="0.0.0.0", debug=True)
