@@ -48,6 +48,42 @@ function MainPage() {
         }
     }
 
+    async function randomQuest() {
+        const incompleteTasks = []
+        for (const list of taskList) { 
+            let response;
+            try {
+                response = await gapi.client.tasks.tasks.list({
+                    'tasklist': list.id
+                });
+            } catch (err) {
+                document.getElementById('api-errors').innerText = err.message;
+                return;
+            }
+            const tasksResult = response.result.items;
+
+            for (const task of tasksResult) {
+                if (task.status === 'needsAction') {
+                    incompleteTasks.push(task.title)
+                }
+            }
+        }
+        const incompleteData = {
+            incomplete: incompleteTasks
+        }
+        
+        let data = await fetch('/random-quest.json', {
+                method: 'POST',
+                body: JSON.stringify(incompleteData),
+                headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+        data = await data.json();
+        document.getElementById('main-quest-div').innerHTML = `A friendly NPC has handed you a scroll. It reads "${data.task_title}". Do you accept this quest?`
+        document.getElementById('quote-author').style.display = "none"
+    }
+
     // Track changes from input and updates the state of the newName variable
     const handleNewName = (event) => {
         setNewName(event.target.value);
@@ -140,7 +176,9 @@ function MainPage() {
         <React.Fragment>
             <nav className="navbar bg-body-tertiary sticky-top" >
                 <div className="container-fluid">
-                    <a className="navbar-brand" href="#">Done & Done</a>
+                    <a className="navbar-brand" href="#">
+                        <img src="/static/img/navbar.png" alt="Done and Done Logo" height="58"></img>
+                    </a>
                     <ul className="navbar-nav me-auto mb-auto">
                         <li className="nav-item">
                             <a className="nav-link" href="#" role="button" id="authorize_button" 
@@ -163,6 +201,11 @@ function MainPage() {
                     </div>
                     <div className="offcanvas-body">
                         <ul className="navbar-nav justify-content-end flex-grow-1 pe-3">
+                            <li className="nav-item">
+                                <a className="nav-link" href="#" data-bs-dismiss="offcanvas" onClick= { randomQuest }>
+                                    Random quest
+                                </a>
+                            </li>
                             <li className="nav-item dropdown">
                                 <a className="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" 
                                 data-bs-auto-close="inside" aria-expanded="false">
@@ -291,6 +334,15 @@ function MainPage() {
             </div>                
             <div id="toast-notif" className="toast-container bottom-0 end-0 p-3">
             </div>
+                <style>
+                    {`
+                        .navbar-brand {
+                            height: 50px;
+                            padding-top: 0px; 
+                            padding-bottom: 0px
+                        }
+                    `}
+                </style>
         </React.Fragment>
     )
 }
@@ -421,7 +473,6 @@ function TaskListView(props) {
                 `<div class="toast notification-${data.toast_id}" role="alert" aria-live="polite" aria-atomic="true">
                 <div class="toast-header border-0">
                     <strong class="me-auto">Experience gained!</strong>
-                    <small class="text-body-secondary">just now</small>
                     <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
                 </div>
                 <div class="toast-body border-0">
@@ -442,7 +493,7 @@ function TaskListView(props) {
     // Fetch tasks on load and every change to list.
     React.useEffect(() => {
         fetchTasks()
-    }, [props.list]);
+    }, []);
 
     // Update score display with every change to totalScore.
     React.useEffect(() => {
@@ -563,7 +614,7 @@ function Task(props) {
         if (task.status === 'completed'){
             return  
         }
-        document.getElementById('main-quest-div').innerHTML = `<strong>Main Quest: ${task.title}</strong>`
+        document.getElementById('main-quest-div').innerHTML = `<strong>Main Quest:</strong> <br></br>${task.title}`
         document.getElementById('quote-author').style.display = "none"
     }
 

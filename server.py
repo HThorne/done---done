@@ -6,6 +6,7 @@ from passlib.hash import argon2
 from jinja2 import StrictUndefined
 from re import fullmatch
 from os import environ
+from random import choice
 
 # From my files
 from model import connect_to_db, db
@@ -181,6 +182,11 @@ def update_rpg_class():
 
         user.level = 1
         user.total_score = 0
+        archive_tasks = crud.get_all_active_tasks_by_user(user.user_id)
+        
+        for task in archive_tasks:
+            task.status = "archive"
+
         db.session.commit()
     
     class_info = {
@@ -191,6 +197,22 @@ def update_rpg_class():
 
     return jsonify(class_info)
 
+
+@app.route('/random-quest.json', methods=["POST"])
+def random_quest():
+    """Choose a random task from JSON and return as JSON."""
+    incomplete_tasks = request.json.get("incomplete")
+
+    if incomplete_tasks:
+        task_title = choice(incomplete_tasks)
+    else: 
+        task_title= "Go outside and touch grass. There's no available quests."
+
+    random_task = {
+        "task_title": task_title
+    }
+
+    return jsonify(random_task)
 
 if __name__ == "__main__":
     connect_to_db(app)

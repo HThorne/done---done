@@ -3,6 +3,7 @@ function HomePage() {
 
     return (
         <React.Fragment>
+            <object data="/static/img/Done-&-Done-Main.svg" type="image/svg+xml"></object>
             <h2>Create an Account</h2>
                 <form action="/new_user" method="POST">
                     <div className="mb-3 row g-3 align-items-center">
@@ -98,6 +99,14 @@ function HomePage() {
                         <button type="submit" className="btn btn-secondary mb-3"> Submit </button>
                     </div>
                 </form>
+                {/* <style>
+                    {`
+                        object {
+                            height: auto;
+                            width: 489px;
+                        }
+                    `}
+                </style> */}
         </React.Fragment>
     )
 }
