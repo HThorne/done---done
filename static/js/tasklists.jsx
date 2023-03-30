@@ -33,7 +33,7 @@ function MainPage() {
                 throw (resp);
             }
 
-            document.getElementById('authorize_button').innerText = 'Connected. Refresh?';
+            document.getElementById('authorize_button').innerText = 'Refresh tasks?';
             document.getElementById('new-tasklist').placeholder='Add new list';
             await fetchTaskLists();
         }
@@ -195,7 +195,7 @@ function MainPage() {
                 aria-labelledby="offcanvasNavbarLabel">
                     <div className="offcanvas-header">
                         <h5 className="offcanvas-title" id="offcanvasNavbarLabel"> Options </h5>
-                        <button ref={buttonCloseRef} type="button" className="btn-close" 
+                        <button ref={buttonCloseRef} type="button" className="btn-close mr-20px" 
                         data-bs-dismiss="offcanvas" aria-label="Close">
                         </button>
                     </div>
@@ -318,20 +318,33 @@ function MainPage() {
                         </div>
                     </div>
                 </div>
-                <figure className="text-center mt-3">
-                    <blockquote className="blockquote">
-                        <p id="main-quest-div">
-                            Happiness is like those palaces in fairytales whose gates are guarded by dragons: We must fight in order to conquer it.
-                        </p>
-                    </blockquote>
-                    <figcaption id="quote-author" className="blockquote-footer">
-                        Alexandre Dumas <cite id="quote-source" title="Source Title"></cite>
-                    </figcaption>
-                </figure>
-                <TaskAccordion taskList={taskList} fetchtasklists={fetchTaskLists}/>
-                <div id="points-display">
-                </div>
-            </div>                
+                <div className="container text-center">
+                    <div className="row">
+                        <div className="col-md-6"> 
+                            <figure className="text-center mt-3">
+                                <blockquote className="blockquote">
+                                    <p id="main-quest-div">
+                                        Happiness is like those palaces in fairytales whose gates are guarded by dragons: We must fight in order to conquer it.
+                                    </p>
+                                </blockquote>
+                                <figcaption id="quote-author" className="blockquote-footer">
+                                    Alexandre Dumas <cite id="quote-source" title="Source Title"></cite>
+                                </figcaption>
+                            </figure>
+                            <div class="image-container">
+                                <object data="/static/img/sword.svg" type="image/svg+xml"></object>
+                            </div> 
+                            <div class="card text-bg-light mb-3 col-md-6">
+                                <div class="card-body">                               
+                                    <blockquote className="blockquote" id="points-display">
+                                    </blockquote>
+                                </div>
+                            </div>
+                        </div>
+                        <TaskAccordion taskList={taskList} fetchtasklists={fetchTaskLists}/>
+                    </div>
+                </div>  
+            </div>              
             <div id="toast-notif" className="toast-container bottom-0 end-0 p-3">
             </div>
                 <style>
@@ -341,6 +354,15 @@ function MainPage() {
                             padding-top: 0px; 
                             padding-bottom: 0px
                         }
+                        
+                        .image-container {
+                            position: relative;
+                            display: block;
+                            width: 100%;
+                            height: auto;
+                          }
+
+                          </style>
                     `}
                 </style>
         </React.Fragment>
@@ -398,15 +420,17 @@ function TaskAccordion(props) {
     }
   
     return (
-        <div className="accordion accordion-flush" id="accordionAllLists">
-            { taskLists } 
-            <div className="accordion-item">                 
-                <h2 className="accordion-header" id="add_new_list">           
-                    <input id="new-tasklist" type="text" className="form-control border-0" 
-                    placeholder="Connect to Google Tasks by clicking Authorize" aria-label="Add task list" 
-                    value={taskListInput} onChange={handleInputList} onKeyDown={handleListEnter}>
-                    </input>
-                </h2>
+        <div class="col-md-6">    
+            <div className="accordion accordion-flush" id="accordionAllLists">
+                { taskLists } 
+                <div className="accordion-item">                 
+                    <h2 className="accordion-header" id="add_new_list">           
+                        <input id="new-tasklist" type="text" className="form-control border-0" 
+                        placeholder="Connect to Google Tasks by clicking Authorize" aria-label="Add task list" 
+                        value={taskListInput} onChange={handleInputList} onKeyDown={handleListEnter}>
+                        </input>
+                    </h2>
+                </div>
             </div>
         </div>
     )
@@ -564,7 +588,7 @@ function TaskListView(props) {
                 <div id={props.list.id} className="accordion-collapse show" aria-labelledby={props.list.title}
                   data-bs-parent="#accordionAllLists">
                     <div className="accordion-body">
-                        <table className="table table-hover table-borderless align-middle"> 
+                        <table className="table table-hover table-borderless align-left"> 
                             <tbody>
                                 <tr>
                                     <th scope="row"></th>
@@ -756,11 +780,11 @@ function Task(props) {
                 </input>
             </td>
             <td>
-                <div className="btn-group">
-                    <button type="button" className="btn btn-secondary dropdown-toggle" 
-                    data-bs-toggle="dropdown" aria-expanded="false">
+                <div className="nav-item dropdown">
+                    <a className="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" 
+                    aria-expanded="false">
                         Options
-                    </button>
+                    </a>
                     <ul className="dropdown-menu">
                         <li>
                             <button className="dropdown-item" onClick={mainQuest}> 
