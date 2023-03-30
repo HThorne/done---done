@@ -206,7 +206,7 @@ def random_quest():
     if incomplete_tasks:
         task_title = choice(incomplete_tasks)
     else: 
-        task_title= "Go outside and touch grass. There's no available quests."
+        task_title= "Go outside and touch grass. There's no other available quests."
 
     random_task = {
         "task_title": task_title

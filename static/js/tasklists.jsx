@@ -177,7 +177,7 @@ function MainPage() {
             <nav className="navbar bg-body-tertiary sticky-top" >
                 <div className="container-fluid">
                     <a className="navbar-brand" href="#">
-                        <img src="/static/img/navbar.png" alt="Done and Done Logo" height="58"></img>
+                        <img src="/static/img/navbaricon.png" alt="Done and Done Logo"></img>
                     </a>
                     <ul className="navbar-nav me-auto mb-auto">
                         <li className="nav-item">
