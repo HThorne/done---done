@@ -33,7 +33,7 @@ function MainPage() {
                 throw (resp);
             }
 
-            document.getElementById('authorize_button').innerText = 'Refresh tasks?';
+            document.getElementById('authorize_button').innerText = 'Refresh?';
             document.getElementById('new-tasklist').placeholder='Add new list';
             await fetchTaskLists();
         }
@@ -80,7 +80,7 @@ function MainPage() {
             },
         })
         data = await data.json();
-        document.getElementById('main-quest-div').innerHTML = `A friendly NPC has handed you a scroll. It reads "${data.task_title}". Do you accept this quest?`
+        document.getElementById('main-quest-div').innerHTML = `A friendly NPC has handed you a scroll. It reads "${data.task_title}". This is your next quest!`
         document.getElementById('quote-author').style.display = "none"
     }
 
@@ -174,14 +174,14 @@ function MainPage() {
 
     return (
         <React.Fragment>
-            <nav className="navbar bg-body-tertiary sticky-top" >
+            <nav className="navbar navbar-default bg-body-tertiary sticky-top">
                 <div className="container-fluid">
                     <a className="navbar-brand" href="#">
                         <img src="/static/img/navbaricon.png" alt="Done and Done Logo"></img>
                     </a>
                     <ul className="navbar-nav me-auto mb-auto">
                         <li className="nav-item">
-                            <a className="nav-link" href="#" role="button" id="authorize_button" 
+                            <a className="nav-link black-text" href="#" role="button" id="authorize_button" 
                             onClick={handleAuthClick}>
                                 Authorize
                             </a>
@@ -200,7 +200,12 @@ function MainPage() {
                         </button>
                     </div>
                     <div className="offcanvas-body">
-                        <ul className="navbar-nav justify-content-end flex-grow-1 pe-3">
+                        <ul className="navbar-nav justify-content-end flex-grow-1 pe-3">                            
+                            <li className="nav-item">
+                                <a role="button" className="nav-link" data-bs-toggle="modal" data-bs-target="#helpModal">
+                                    Start here
+                                </a>
+                            </li>
                             <li className="nav-item">
                                 <a className="nav-link" href="#" data-bs-dismiss="offcanvas" onClick= { randomQuest }>
                                     Random quest
@@ -209,7 +214,7 @@ function MainPage() {
                             <li className="nav-item dropdown">
                                 <a className="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" 
                                 data-bs-auto-close="inside" aria-expanded="false">
-                                    Rename a List
+                                    Rename a list
                                 </a>
                                 <ul className="dropdown-menu border-0">
                                     {editListButtons}
@@ -254,11 +259,7 @@ function MainPage() {
                                     </li>
                                 </ul>
                             </li>                            
-                            <li className="nav-item">
-                                <a role="button" className="nav-link" data-bs-toggle="modal" data-bs-target="#helpModal">
-                                    Help
-                                </a>
-                            </li>
+
                             <li className="nav-item">
                                 <a className="nav-link" href="/logout" action="/logout" role="button">
                                     Logout
@@ -310,7 +311,7 @@ function MainPage() {
                                 any Google account to gain XP. Ex. you can switch from your school account 
                                 to your personal account and you'll still gain XP! <br></br> 
                                 <br></br>
-                                <strong>WARNING:</strong><br></br>
+                                <strong id="warning">WARNING:</strong><br></br>
                                 If you decide to change class, you will lose all your XP and start 
                                 at a level 1 in your new class. Old class data is not saved.
                             </p>
@@ -318,11 +319,12 @@ function MainPage() {
                         </div>
                     </div>
                 </div>
-                <div className="container text-center">
-                    <div className="row">
-                        <div className="col-md-6"> 
-                            <figure className="text-center mt-3">
-                                <blockquote className="blockquote">
+                <div className="container-flex text-center justify-content-center mx-3">
+                    <div className="row">                        
+                        <TaskAccordion taskList={taskList} fetchtasklists={fetchTaskLists}/>
+                        <div className="col-md-6 mt-3"> 
+                            <figure className="card text-center">
+                                <blockquote className="card-body blockquote">
                                     <p id="main-quest-div">
                                         Happiness is like those palaces in fairytales whose gates are guarded by dragons: We must fight in order to conquer it.
                                     </p>
@@ -331,40 +333,17 @@ function MainPage() {
                                     Alexandre Dumas <cite id="quote-source" title="Source Title"></cite>
                                 </figcaption>
                             </figure>
-                            <div class="image-container">
+                            <div class="image-container mb-1">
                                 <object data="/static/img/sword.svg" type="image/svg+xml"></object>
                             </div> 
-                            <div class="card text-bg-light mb-3 col-md-6">
-                                <div class="card-body">                               
-                                    <blockquote className="blockquote" id="points-display">
-                                    </blockquote>
-                                </div>
+                            <div id="points-div" >
                             </div>
                         </div>
-                        <TaskAccordion taskList={taskList} fetchtasklists={fetchTaskLists}/>
                     </div>
                 </div>  
             </div>              
             <div id="toast-notif" className="toast-container bottom-0 end-0 p-3">
-            </div>
-                <style>
-                    {`
-                        .navbar-brand {
-                            height: 50px;
-                            padding-top: 0px; 
-                            padding-bottom: 0px
-                        }
-                        
-                        .image-container {
-                            position: relative;
-                            display: block;
-                            width: 100%;
-                            height: auto;
-                          }
-
-                          </style>
-                    `}
-                </style>
+        </div>
         </React.Fragment>
     )
 }
@@ -421,12 +400,12 @@ function TaskAccordion(props) {
   
     return (
         <div class="col-md-6">    
-            <div className="accordion accordion-flush" id="accordionAllLists">
+            <div className="accordion mt-3" id="accordionAllLists">
                 { taskLists } 
                 <div className="accordion-item">                 
                     <h2 className="accordion-header" id="add_new_list">           
                         <input id="new-tasklist" type="text" className="form-control border-0" 
-                        placeholder="Connect to Google Tasks by clicking Authorize" aria-label="Add task list" 
+                        placeholder="Click Authorize above to link to Google Tasks" aria-label="Add task list" 
                         value={taskListInput} onChange={handleInputList} onKeyDown={handleListEnter}>
                         </input>
                     </h2>
@@ -521,9 +500,23 @@ function TaskListView(props) {
 
     // Update score display with every change to totalScore.
     React.useEffect(() => {
-        document.getElementById('points-display').innerText = `LEVEL ${userLevel} ${userClass} 
-        \n  ${totalScore} XP`
+        document.getElementById('points-div').innerHTML = `                            
+            <div class="card"> 
+                <div class="card-body row">
+                    <div class="col mt-2">
+                        <div id="player-badge" class="image-container">
+                            <img src="/static/img/${userClass}.png"></img>                            
+                        </div>
+                    </div>
+                    <div class="col">                          
+                        <blockquote class="blockquote mt-3 mb-3" id="points-display">
+                           LVL ${userLevel} ${userClass} <br></br> ${totalScore} XP
+                        </blockquote>
+                    </div>
+                </div>
+            </div>`
     }, [totalScore]);
+
 
     // Track changes from input and updates the state of the taskInput variable
     const handleInputText = (event) => {
@@ -585,27 +578,24 @@ function TaskListView(props) {
                         {props.list.title}
                     </button>
                 </h2>
-                <div id={props.list.id} className="accordion-collapse show" aria-labelledby={props.list.title}
-                  data-bs-parent="#accordionAllLists">
-                    <div className="accordion-body">
-                        <table className="table table-hover table-borderless align-left"> 
-                            <tbody>
-                                <tr>
-                                    <th scope="row"></th>
-                                    <td>
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-plus-lg" viewBox="0 0 16 16">
-                                            <path fillRule="evenodd" d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2Z"/>
-                                        </svg>
-                                    </td>
-                                    <td colSpan="2">
-                                        <input type="text" className="form-control border-0" placeholder="Add a new task" 
-                                        aria-label="Add task" value={taskInput} onChange={handleInputText} onKeyDown={handleEnter}>
-                                        </input>
-                                    </td>
-                                </tr>
+                <div id={props.list.id} className="accordion-collapse collapse" aria-labelledby={props.list.title}
+                data-bs-parent="#accordionAllLists">
+                    <div className="accordion-body" >
+                        <div class="container text-center px-1">
+                            <div class="row mb-3 g-3 align-items-center">
+                                <div class="col-auto">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-plus-lg" viewBox="0 0 16 16">
+                                        <path fillRule="evenodd" d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2Z"/>
+                                    </svg>
+                                </div>
+                                <div class="col">
+                                    <input type="text" className="form-control border-0" placeholder="Add a new task" 
+                                    aria-label="Add task" value={taskInput} onChange={handleInputText} onKeyDown={handleEnter}>
+                                    </input>
+                                </div>
+                            </div>
                              {tasksElements} 
-                            </tbody>
-                        </table>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -767,19 +757,18 @@ function Task(props) {
 
 
     return (
-        <tr style={ displayAttribute } list={props.list.id}>
-            <th scope="row"></th>
-            <td>   
+        <div class="row mb-3 g-3 align-items-center" style={ displayAttribute } list={props.list.id}>
+            <div class="col-auto"> 
                 <input className="form-check-input" type="checkbox" checked={ task.status === 'completed' }
                 value="" aria-label="Task complete checkbox" onChange={completeTask} >
                 </input>
-            </td>
-            <td>
-                <input className="border-0" type="text" style = {style} value={ taskEdit } 
+            </div>
+            <div class="col-auto">
+                <input className="form-control border-0" type="text" style={style} value={ taskEdit } 
                 onChange={ handleEdit } onKeyDown={handleEditEnter} onBlur={() => editTask(taskEdit)}>
                 </input>
-            </td>
-            <td>
+            </div>
+            <div class="col-auto">
                 <div className="nav-item dropdown">
                     <a className="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" 
                     aria-expanded="false">
@@ -798,8 +787,8 @@ function Task(props) {
                         </li>
                     </ul>
                 </div>
-            </td>
-        </tr>
+            </div>
+        </div>
     )
 }
  

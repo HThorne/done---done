@@ -1,0 +1,80 @@
+body { 
+    font-family: 'Corben', cursive; 
+    font-weight:  400;
+    font-size: small;
+    background-image: url('img/brick.png');
+    background-repeat: repeat;
+  }
+
+.nav-link {
+    color: black;
+}
+
+#authorize_button {
+    color: white;
+    font-size: large;
+    font-weight: bold;
+    letter-spacing: 2px;
+}
+
+.navbar-default {
+    background-color: #424C3D !important;
+    color: black;
+    opacity: 0.96;
+    border-bottom:5px solid #4D5A46;
+    padding-top: 5px;
+    padding-bottom: 7px;
+}
+
+
+.navbar-brand {
+    height: 50px;
+    padding-top: 0px; 
+    padding-bottom: 0px
+}
+
+.navbar-toggler {
+    background-color: #656E62 !important;
+  }
+
+.image-container {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+#points-display {
+    line-height: 1;
+    vertical-align: middle;
+}
+
+.card-body {
+    display: flex;
+    align-items: center; /* Center vertically */
+    justify-content: center; /* Center horizontally */
+}
+
+
+.card {
+    background-color: #F6E9C7;
+    opacity: 0.8;
+}
+
+#warning {
+    color: #750700;
+}
+
+
+.btn
+{
+    background-color: #697a21;
+    border-width: 0px;
+}
+
+.btn:hover
+{
+    background-color: #34641B;
+    border-width: 0px;
+}
+

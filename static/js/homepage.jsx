@@ -4,29 +4,20 @@ function HomePage() {
     return (
         <React.Fragment>
             <object data="/static/img/homepagelogo.svg" type="image/svg+xml"></object>
-            <h2>Create an Account</h2>
+            <h3>Create an Account</h3>
                 <form action="/new_user" method="POST">
                     <div className="mb-3 row g-3 align-items-center">
                         <div className="col-auto">
-                            <label htmlFor="nameInput" className="form-label">
-                                First Name
-                            </label>
-                        </div>
-                        <div className="col-auto">
-                            <input type="text" className="form-control" required={true} 
-                            aria-required="true" id="nameInput" name="fname">
+                            <input type="text" className="form-control form-control-sm" required={true} 
+                            aria-required="true" id="nameInput" placeholder="First Name" name="fname">
                             </input>
                         </div>
                     </div>
                     <div className="mb-3 row g-3 align-items-center">
                         <div className="col-auto">
-                            <label htmlFor="classInput" className="form-label">
-                                Choose a Class
-                            </label>
-                        </div>
-                        <div className="col-auto">
-                            <select name="class-input" className="form-select" aria-label="Select class" 
+                            <select name="class-input" className="form-select form-select-sm" aria-label="Select class" 
                             required={true} aria-required="true" id="classInput">
+                                <option selected disabled>Choose an RPG Class</option>
                                 <option value="Barbarian">Barbarian</option>
                                 <option value="Bard">Bard</option>
                                 <option value="Druid">Druid</option>
@@ -37,76 +28,70 @@ function HomePage() {
                     </div>
                     <div className="mb-3 row g-3 align-items-center">
                         <div className="col-auto">
-                            <label htmlFor="emailInput" className="form-label">
-                                Email Address
-                            </label>
-                        </div>
-                        <div className="col-auto">
-                            <input type="email" name="email" className="form-control" required={true} 
-                            aria-required="true" id="emailInput" placeholder="name@example.com">
+                            <input type="email" name="email" className="form-control form-control-sm" required={true} 
+                            aria-required="true" id="emailInput" placeholder="Email">
                             </input>
                         </div>
                     </div>
                     <div className="row g-3 align-items-center">
                         <div className="col-auto">
-                            <label htmlFor="inputPassword" className="col-form-label">
-                                Password
-                            </label>
-                        </div>
-                        <div className="col-auto">
                             <input type="password" name="password" id="inputPassword" required={true} 
-                            aria-required="true" className="form-control" aria-labelledby="passwordHelpInline">
+                            aria-required="true" className="form-control form-control-sm" placeholder="Create Password" aria-labelledby="passwordHelpInline">
                             </input>
                         </div>
-                        <div className="col-auto">
+                    </div>                        
+                    <div className="col-auto">
                             <span id="passwordHelpInline" className="form-text">
                                 Must be 8-20 characters long.
                             </span>
                         </div>
-                    </div>
                     <div className="mt-3">
-                        <button type="submit" className="btn btn-secondary mb-3"> Submit </button>
+                        <button type="submit" className="btn btn-success btn-sm mb-3"> Submit </button>
                     </div>
                 </form>
             
-            <h2>Log In</h2>
+            <h3 className="mt-3">Log In</h3>
                 <form action="/login" method="POST">
                     <div className="mb-3 row g-3 align-items-center">
                         <div className="col-auto">
-                            <label htmlFor="emailInput" className="form-label">
-                                Email Address
-                            </label>
-                        </div>
-                        <div className="col-auto">
-                            <input type="email" name="email" className="form-control" required={true} 
-                            aria-required="true" id="emailLogin">
+                            <input type="email" name="email" className="form-control form-control-sm" required={true} 
+                            aria-required="true" id="emailLogin" placeholder="Email">
                             </input>
-                        </div>
-                    </div>
-                    <div className="row g-3 align-items-center">
-                        <div className="col-auto">
-                            <label htmlFor="passwordLogin" className="col-form-label">
-                                Password
-                            </label>
                         </div>
                         <div className="col-auto">
                             <input type="password" name="password" id="passwordLogin" required={true} 
-                            aria-required="true" className="form-control" aria-labelledby="passwordHelpInline">
+                            aria-required="true" className="form-control form-control-sm" placeholder="Password">
                             </input>
                         </div>
                     </div>
                     <div className="mt-3">
-                        <button type="submit" className="btn btn-secondary mb-3"> Submit </button>
+                        <button type="submit" className="btn btn-success btn-sm mb-3"> Submit </button>
                     </div>
                 </form>
-                {/* <style>
+                <style>
                     {`
                         object {
                             height: auto;
-                            width: 489px;
+                            width: 40vw;
+                            position: absolute;
+                            top: 25%;
+                            left: 75%;
+                            transform: translate(-50%, -50%);
+                        }
+
+                        h3 {
+                            color: white;
+                        }
+
+                        label {
+                            color: white;
+                        }
+
+                        .form-text {
+                            color: white;                            
                         }
                     `}
-                </style> */}
+                </style>
         </React.Fragment>
     )
 }
