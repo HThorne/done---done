@@ -284,7 +284,7 @@ function MainPage() {
                                 </input>
                             </div>
                             <div className="modal-footer border-0">
-                                <button type="button" className="btn btn-secondary" data-bs-dismiss="modal" 
+                                <button type="button" className="btn btn-success btn-sm" data-bs-dismiss="modal" 
                                 onClick={editList}>
                                     Save
                                 </button>
@@ -326,7 +326,7 @@ function MainPage() {
                             <figure className="card text-center">
                                 <blockquote className="card-body blockquote">
                                     <p id="main-quest-div">
-                                        Happiness is like those palaces in fairytales whose gates are guarded by dragons: We must fight in order to conquer it.
+                                        Happiness is like those palaces in fairytales whose gates are guarded by dragons: <br></br> We must fight in order to conquer it.
                                     </p>
                                 </blockquote>
                                 <figcaption id="quote-author" className="blockquote-footer">
@@ -334,7 +334,7 @@ function MainPage() {
                                 </figcaption>
                             </figure>
                             <div class="image-container mb-1">
-                                <object data="/static/img/sword.svg" type="image/svg+xml"></object>
+                                <object data="/static/img/sword-divider.svg" type="image/svg+xml"></object>
                             </div> 
                             <div id="points-div" >
                             </div>

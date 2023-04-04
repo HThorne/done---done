@@ -2,7 +2,7 @@ body {
     font-family: 'Corben', cursive; 
     font-weight:  400;
     font-size: small;
-    background-image: url('img/brick.png');
+    background-image: url('img/bigger-brick.png');
     background-repeat: repeat;
   }
 
@@ -53,11 +53,12 @@ body {
     display: flex;
     align-items: center; /* Center vertically */
     justify-content: center; /* Center horizontally */
+    color: black;
 }
 
 
 .card {
-    background-color: #F6E9C7;
+    background-color: #BDC9B8;
     opacity: 0.8;
 }
 
@@ -66,15 +67,26 @@ body {
 }
 
 
-.btn
+.btn-success
 {
     background-color: #697a21;
     border-width: 0px;
 }
 
-.btn:hover
+.btn-success:hover
 {
     background-color: #34641B;
     border-width: 0px;
 }
 
+.btn-danger
+{
+    background-color: #AB1315;
+    border-width: 0px;
+}
+
+.btn-danger:hover
+{
+    background-color: #750700;
+    border-width: 0px;
+}
